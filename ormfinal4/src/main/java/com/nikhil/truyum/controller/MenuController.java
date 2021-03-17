@@ -189,38 +189,33 @@ public class MenuController {
 //	return "favtSuccess";
 //}
 
-	@RequestMapping(value ="/viewfavrt/{username}")
+	@RequestMapping(value ="/viewfavt/{username}")
 	@ResponseBody
 	public List<MovieData> viewFavorites(@PathVariable String username){
 		User user =userService.findByName(username);
-		
-		List<Integer> list = movieService.getAllFavMovies(user.getUser_id());
+		System.out.println(user);
+		Set<MovieData> movie=user.getMovieList();
 		List<MovieData> favtlist = new ArrayList<>();
 		
-		for (Integer ele : list) {
-			List<MovieData> tlist = movieService.getMovieListCustomer();
-			for (MovieData m : tlist) {
-				if (m.getId() == ele) {
-					favtlist.add(m);
-				}
-			}
+		for(MovieData ele:movie) {
+			favtlist.add(ele);
 		}
 		return favtlist;
 	}
-//	
-//	@DeleteMapping(value="/delete/{username}/{id}")
-//	@ResponseBody
-//	public ResponseEntity<MovieData> deleteFromFavt(@PathVariable String username, @PathVariable int id){
-//		User user =userService.findByName(username);
-//		MovieData movie = movieService.removeFavtMovie(user.getUser_id(), id);
-//		return new ResponseEntity<MovieData>(movie, HttpStatus.OK);
-//		
-//	}
 	
-	@PostMapping(value="/addfavt/{username}")
+	@DeleteMapping(value="/delete/{username}/{id}")
 	@ResponseBody
-	public ResponseEntity<MovieData> addtoFavt(@PathVariable String username, @PathVariable int id){
-		MovieData movie =movieService.get(id);
+	public ResponseEntity<MovieData> deleteFromFavt(@PathVariable String username, @PathVariable int id){
+		User user =userService.findByName(username);
+		MovieData movie = movieService.removeFavorites(username, id);
+		return new ResponseEntity<MovieData>(movie, HttpStatus.OK);
+		
+	}
+	
+	@PostMapping(value="/add-to-favorites/{username}")
+	@ResponseBody
+	public ResponseEntity<MovieData> addtoFavt(@PathVariable String username, @RequestBody String id){
+		MovieData movie =movieService.get(Integer.parseInt(id));
 		
 		movieService.addToFavorites(username, movie);
 		return new ResponseEntity<MovieData>(movie,HttpStatus.OK);

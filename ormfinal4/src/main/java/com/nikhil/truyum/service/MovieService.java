@@ -59,12 +59,22 @@ public class MovieService {
 		return movieRepository.getAllFavMovies(userID);
 	}
 	
-	
-	@Transactional
+
 	public MovieData addToFavorites(String username, MovieData movie) {
 		User user = userRepository.findByUsername(username);
 		Set<MovieData> favorites =user.getMovieList();
 		favorites.add(movie);
+		user.setMovieList(favorites);
+		userRepository.save(user);
+		return movie;
+	}
+	
+
+	public MovieData removeFavorites(String username, int id) {
+		User user = userRepository.findByUsername(username);
+		Set<MovieData> favorites =user.getMovieList();
+		MovieData movie =movieRepository.findById(id).get();
+		favorites.remove(movie);
 		user.setMovieList(favorites);
 		userRepository.save(user);
 		return movie;

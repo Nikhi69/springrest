@@ -53,18 +53,29 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().exceptionHandling()
-		
-		
-				.authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().anyRequest()
-				.authenticated();
+		http.csrf().disable()
+		.authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers(HttpMethod.GET, "/" ).permitAll().antMatchers("/add-to-favorites/{\\d}").permitAll().antMatchers("/viewfavt/{\\d}").permitAll()
+		.antMatchers("/delete/{\\d}").permitAll()
+		.antMatchers("/authenticate").permitAll().
+				anyRequest().authenticated().and().
+				exceptionHandling().and().sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.cors().disable();
 		http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+		
+	}	
+//		http.csrf().disable().exceptionHandling()
+//		
+//		
+//				.authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint).and().sessionManagement()
+//				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().anyRequest()
+//				.authenticated();
+//		http.cors().disable();
+//		http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 //		httpSecurity.headers().frameOptions().sameOrigin() // H2 Console Needs this setting
 //				.cacheControl(); // disable caching
-	}
+	
 //	@Overridethis.http.get<any>("http://localhost:7001/empJson",
 //      {
 //        headers: new HttpHeaders()
@@ -78,13 +89,13 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		.antMatchers("/movielistCustomer","/addfavt","/viewfavt","/removeItem").hasRole("user")
 //		.and().formLogin();
 //	}
-	@Override
-	public void configure(WebSecurity webSecurity) throws Exception {
-		webSecurity.ignoring().antMatchers(HttpMethod.POST, authenticationPath)
-				.antMatchers(HttpMethod.OPTIONS, "/**")
-				.and().ignoring()
-				.antMatchers(HttpMethod.GET, "/" // Other Stuff You want to Ignore
-				).and().ignoring();
-				
-	}
+//	@Override
+//	public void configure(WebSecurity webSecurity) throws Exception {
+//		webSecurity.ignoring().antMatchers(HttpMethod.POST, authenticationPath)
+//				.antMatchers(HttpMethod.OPTIONS, "/**")
+//				.and().ignoring()
+//				.antMatchers(HttpMethod.GET, "/" // Other Stuff You want to Ignore
+//				).and().ignoring();
+//				
+//	}
 }
